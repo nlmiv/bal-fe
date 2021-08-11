@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import axios from 'axios'
+import { withRouter } from 'react-router-dom';
 
-const BAL_URL = 'https://whispering-tundra-16985.herokuapp.com/flights.json'
+import axios from 'axios';
+
+const BAL_URL = 'https://whispering-tundra-16985.herokuapp.com/flights.json';
 
 // Search for flights based on destination
 // On submit provide from, to, date to query backend
@@ -19,20 +21,20 @@ class Search extends Component {
         console.log('i got results',res);
         this.setState({ flights: res.data })
         // setTimeout(fetchSecrets, 5000) // recursion
+        this.props.history.push('/flights');
+        // renders the /flights component on the page via withRouter higher-order component
       })
   }
 
   render() {
+    console.log(this.props.history);
     return (
       <div>
       <h1>Search for Flights</h1>
         <SearchForm onSubmit={ this.fetchFlights } />
-        <Flights />
       </div>
     );
   }
-
-
 }
 
 class SearchForm extends Component {
@@ -66,16 +68,4 @@ class SearchForm extends Component {
 
 }
 
-class Flights extends Component {
-
-  render() {
-    return (
-      <div>
-        Flights Coming Soon
-      </div>
-    );
-  }
-
-}
-
-export default Search;
+export default withRouter(Search);

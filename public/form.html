@@ -1,0 +1,91 @@
+
+<html>
+   <head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/light.css">
+     <title></title>
+      <style>
+
+         input[type="radio"]{
+            display:none;
+         }
+
+         input[type="radio"] + label{
+            border: 2px solid;
+            border-color: #c5c5c5;
+            display: inline-block;
+            padding: 15px 20px 18px 20px;
+            border-radius: 10px 10px 20px 20px;
+            cursor: pointer;
+            opacity: 0.8;
+         }
+         input[type="radio"] + label:hover{
+            opacity: 1;
+         }
+         input[type="radio"]:disabled + label:hover{
+            opacity: 0.4;
+            cursor: not-allowed;
+         }
+
+         input[type="radio"]:checked + label{
+            border-color: #0080FF;
+            color: #0080FF;
+
+         }
+         input[type="radio"]:disabled + label{
+            opacity: 0.4;
+            background: #d6cbcb;
+            border-color: #b19a9a;
+         }
+
+         .row{
+            display: flex;
+            gap:40px;
+         }
+      </style>
+   </head>
+ 
+   <body>
+      <form class="seat-allocation-form">
+         <p>ROW A</p>
+         <div class="row">
+            <div class="left">
+               <input type="radio" id="seat-a1" name="address" />
+               <label for="seat-a1">A1</label>
+
+               <input type="radio" id="seat-a2" name="address" />
+               <label for="seat-a2">A2</label>
+            </div>
+
+            <div class="right">
+               <input type="radio" id="seat-a3"name="address" />
+               <label for="seat-a3">A3</label>
+
+               <input type="radio" id="seat-a4" name="address" disabled/>
+               <label for="seat-a4">A4</label>
+            </div>   
+         </div>
+         <p>ROW B</p>
+         <div class="row">
+            <div class="left">
+               <input type="radio" id="seat-b1" name="address" />
+               <label for="seat-b1">B1</label>
+
+               <input type="radio" id="seat-b2" name="address" />
+               <label for="seat-b2">B2</label>
+            </div>
+
+            <div class="right">
+               <input type="radio" id="seat-b3"name="address" />
+               <label for="seat-b3">B3</label>
+
+               <input type="radio" id="seat-b4" name="address" disabled/>
+               <label for="seat-b4">B4</label>
+            </div>   
+         </div>
+         <button style="margin:30px 0;" onClick="functionhere">Book 'Seat No.'</button>
+      </form>
+   </body>
+ </html>
+ 

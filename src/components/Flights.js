@@ -1,6 +1,34 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 import Seat from './Seat';
 
+const ROOT_URL = 'https://whispering-tundra-16985.herokuapp.com/'
+const RESERVATIONS_URL = (ROOT_URL + "reservations")
+const FLIGHT_URL = (ROOT_URL + "flights")
+
+// ➕  Add
+let localReservationObj = {}
+let localFlightObj = {}
+
+// const resObjectHardCode = [{ a1: null,  a2:"Mai",  a3: null,  a4: null,  a5: null,  a6: null}, { b1: null,  b2: null,  b3: null,  b4: null,  b5: null,  b6: null}, { c1:"Pers",  c2:"Joe",  c3: null,  c4: null,  c5 :"Joel",  c6: null}]
+
+
+// creating funcitons here becuase scoping is giving me a headache 😅
+const updateLocalReservationObj = function(userSelectedSeat){
+  // let json = JSON.parse(resObjectHardCode)
+  let rowNumber = userSelectedSeat.charAt(0);
+  rowNumber = rowNumber.charCodeAt(0) - 97
+  let row = localReservationObj[rowNumber]
+  row[userSelectedSeat] = 'user-name'
+}
+
+// const reservations = [
+//   {a1: "Rita", a2: null, a3: null},
+//   {b1: null, b2: "Tom", b3: null },
+//   {c1: "Sam", c2: null, c3: null },
+// ];
+
+const rowIndices = ["A", "B", "C", "D"];
 
 class Flights extends Component {
   constructor() {
@@ -16,11 +44,84 @@ class Flights extends Component {
     this.setState({userSelectedSeat: id});
   }
 
-  // handles select seat button
-  _handleSelect = (event) => {
+  // //handles select seat button
+  // _handleSelect = (event) => {
+  //   event.preventDefault();
+  //   // To Do: send info back to backend
+  //   console.log(this.state.userSelectedSeat);
+  // }
+
+
+  _handleSubmit = (event) => {
     event.preventDefault();
-    console.log(this.state.userSelectedSeat);
-    // To Do: send info back to backend
+    // has the user selected anything? if not error
+    if (!this.state.userSelectedSeat) return alert('You must select a seat first')
+
+    const reservation = {
+      flight_id: 5,
+      seat_number: 'a2',
+      user_id: 3
+    }
+
+    axios.post(RESERVATIONS_URL, {reservation}).then((response) => {
+      console.log('Posting a new reservation:')
+      console.log(response)
+    });
+
+    // update our reservation obj to match selected seat
+    console.log("funciton is called")
+    updateLocalReservationObj("a1");
+
+
+  // console.log(localFlightObj);
+    // localFlightObj
+    axios.patch(`${FLIGHT_URL}/5.json`, localFlightObj).then((response) => {
+        console.log('editing flight obj:')
+        console.log(response)
+    });
+
+  }
+
+  componentDidMount() {
+
+     // get flight from DB
+    axios.get(`${FLIGHT_URL}/5.json`).then((res) => {
+      console.log('getting existing flight obj, saving as local flight obj:')
+      localFlightObj = res.data;
+      console.log(localFlightObj)
+
+      // add reservation obj to state of component
+      localReservationObj = JSON.parse(localFlightObj.reservation_obj)
+
+      }
+    )
+  }
+
+  // renders row number from const array rowIndices
+  renderRowIndex = (i) => {
+    return rowIndices[i];
+  }
+
+  renderReservations = (arrObj) => {
+
+    // Loop reservations, render row,
+    // for each key in row render seat
+    return reservations.map((row, index) => {
+      return (
+        <div key={index}>
+          <p>ROW {this.renderRowIndex(index)}</p>
+          <div className="row" key={index}>
+             <div className="left">
+               {Object.keys(row).map(seat => {
+                 return (
+                   <Seat key={seat} id={seat} reservedBy={row[seat]} checked={ this.state.userSelectedSeat === seat } onClick={ this.handleClick } />
+                 )
+               })}
+             </div>
+           </div>
+         </div>
+      )
+    })
   }
 
   render() {
@@ -28,37 +129,10 @@ class Flights extends Component {
       <div>
         <h1>Select your preferred seat</h1>
         <form className="seat-allocation-form">
-          <p>ROW A</p>
-          <div className="row">
-             <div className="left">
-               <Seat id="a1" reservedBy="Hessam" checked={ this.state.userSelectedSeat === 'a1' } onClick={ this.handleClick } />
-               <Seat id="a2" reservedBy="" checked={ this.state.userSelectedSeat === 'a2' } onClick={ this.handleClick } />
-               <Seat id="a3" reservedBy="" checked={ this.state.userSelectedSeat === 'a3' } onClick={ this.handleClick } />
-             </div>
 
-             <div className="right">
-             <Seat id="a4" reservedBy="Mina" checked={ this.state.userSelectedSeat === 'a4' } onClick={ this.handleClick } />
-             <Seat id="a5" reservedBy="" checked={ this.state.userSelectedSeat === 'a5' } onClick={ this.handleClick } />
-             <Seat id="a6" reservedBy="" checked={ this.state.userSelectedSeat === 'a6' } onClick={ this.handleClick } />
-             </div>
-           </div>
+          {this.renderReservations()}
 
-          <p>ROW B</p>
-          <div className="row">
-             <div className="left">
-             <Seat id="b1" reservedBy="" checked={ this.state.userSelectedSeat === 'b1' } onClick={ this.handleClick } />
-             <Seat id="b2" reservedBy="" checked={ this.state.userSelectedSeat === 'b2' } onClick={ this.handleClick } />
-             <Seat id="b3" reservedBy="" checked={ this.state.userSelectedSeat === 'b3' } onClick={ this.handleClick } />
-             </div>
-
-             <div className="right">
-             <Seat id="b4" reservedBy="" checked={ this.state.userSelectedSeat === 'b4' } onClick={ this.handleClick } />
-             <Seat id="b5" reservedBy="" checked={ this.state.userSelectedSeat === 'b5' } onClick={ this.handleClick } />
-             <Seat id="b6" reservedBy="" checked={ this.state.userSelectedSeat === 'b6' } onClick={ this.handleClick } />
-             </div>
-           </div>
-
-           <button onClick={ this._handleSelect } >Select Seat</button>
+           <button onClick={ this._handleSubmit } >Select Seat</button>
         </form>
       </div>
     );
